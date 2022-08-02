@@ -59,3 +59,12 @@ function mousePressed(){
     }
   }
 }
+
+
+function keyPressed(){
+  if(key === "d" && selectedPendulum){
+    console.log("Deleting pendulum ", selectedPendulum)
+    pendulums = pendulums.filter(x => x != selectedPendulum)
+    selectedPendulum = undefined
+  }
+}
