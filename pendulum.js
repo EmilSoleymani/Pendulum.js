@@ -10,6 +10,7 @@ function distance(a, b){
 }
 
 class Pendulum {
+
   constructor(x, y, length, mass, initial_angle){
     // Origin Point
     this.origin = {x: x, y: y}
@@ -30,17 +31,28 @@ class Pendulum {
     this.r = Math.random() * 255
     this.g = Math.random() * 255
     this.b = Math.random() * 255
+
+    // Is it being dragged by a mouse
+    this.followMouse = false
   }
   
   update(){
-    // angular accelration = -g*sin(theta)/R
-    let force = GRAVITY * sin(this.angle)/this.length
-    this.angleA = -force
-    this.angleV += this.angleA
-    this.angle += this.angleV
-    
-    // Damping
-    this.angleV *= 0.99
+    // Update angle
+    if(!this.followMouse){
+      // angular accelration = -g*sin(theta)/R
+      let force = GRAVITY * sin(this.angle)/this.length
+      this.angleA = -force
+      this.angleV += this.angleA
+      this.angle += this.angleV
+      
+      // Damping
+      this.angleV *= 0.99
+    }else{
+      let dx = mouseX - this.origin.x
+      let dy = mouseY - this.origin.y
+
+      this.angle = Math.atan(dx/dy)      
+    }
 
     // Calculate position of "ball" based on angle
     this.ball.x = this.length * sin(this.angle) + this.origin.x
@@ -80,5 +92,9 @@ class Pendulum {
         other.angleV = v2 * 0.99
       }
     }
+  }
+
+  contains(point){
+    return (distance(point, this.ball) < this.mass/2)
   }
 }
