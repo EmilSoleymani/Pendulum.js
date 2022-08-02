@@ -5,4 +5,10 @@ html, body {
 canvas {
     display: block;
 }
+
+.constants-title{
+    font-size: 24px;
+    margin-left: 20px;
+    color: #282828
+}
   

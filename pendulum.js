@@ -1,4 +1,4 @@
-const GRAVITY = 0.981
+// const GRAVITY = 0.981
 
 class Pendulum {
 
@@ -26,24 +26,29 @@ class Pendulum {
     // Is it being dragged by a mouse
     this.followMouse = false
     this.baseFollowMouse = false
+
+    // True when in "adding" phase
+    this.ghost = false
   }
   
   update(){
-    // Update angle
-    if(!this.followMouse){
-      // angular accelration = -g*sin(theta)/R
-      let force = GRAVITY * sin(this.angle)/this.length
-      this.angleA = -force
-      this.angleV += this.angleA
-      this.angle += this.angleV
-      
-      // Damping
-      this.angleV *= 0.99
-    }else{
-      let dx = mouseX - this.origin.x
-      let dy = mouseY - this.origin.y
+    // Update angle if not in ghost mode
+    if(!this.ghost){
+      if(!this.followMouse){
+        // angular accelration = -g*sin(theta)/R
+        let force = GRAVITY * sin(this.angle)/this.length
+        this.angleA = -force
+        this.angleV += this.angleA
+        this.angle += this.angleV
+        
+        // Damping
+        this.angleV *= 1.00 - DAMPING
+      }else{
+        let dx = mouseX - this.origin.x
+        let dy = mouseY - this.origin.y
 
-      this.angle = Math.atan(dx/dy)      
+        this.angle = Math.atan(dx/dy)      
+      }
     }
 
     // If user clicks on origin, follow mouse
@@ -60,16 +65,28 @@ class Pendulum {
   render(){
     // Draw origin point
     noStroke()
-    fill(30)
+    if(this.ghost){
+      fill(30,30,30,30)
+    }else{
+      fill(30)
+    }
     ellipse(this.origin.x, this.origin.y, ORIGIN_SIZE)
 
     // Draw string
-    stroke(this.r, this.g, this.b)
+    if(this.ghost){
+      stroke(this.r, this.g, this.b, 100)
+    }else{
+      stroke(this.r, this.g, this.b)
+    }
     strokeWeight(5)
     line(this.origin.x, this.origin.y, this.ball.x, this.ball.y)
 
     // Draw ball
-    fill(this.r, this.g, this.b)
+    if(this.ghost){
+      fill(this.r, this.g, this.b, 100)
+    }else{
+      fill(this.r, this.g, this.b)
+    }
     noStroke()
     ellipse(this.ball.x, this.ball.y, this.mass)
   }
