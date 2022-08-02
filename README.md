@@ -19,7 +19,7 @@ for(let p of pendulums){
 `Pendulum` class requires the following arguments:
 
 ``` javascript
-new Pendulum((x, y, length, mass, initial_angle))
+new Pendulum(x, y, length, mass, initial_angle)
 ```
 
 ## Improvements
