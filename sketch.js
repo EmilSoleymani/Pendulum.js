@@ -27,27 +27,44 @@ function addRandomPendulums(){
         pendulums.push(new Pendulum(100 + i * 45, 0, 150 + 15*i, 34 + Math.random()*15, PI/4))
 }
 
-function setup() {
-  createCanvas(600, 600);
-    
+function initSliders(){
+  // Constants Sliders
   gravitySlider = createSlider(0, 10, 0.98, 0.01)
   gravitySlider.position(width/4 - gravitySlider.width/2, height - gravitySlider.height - 50)
-
   dampingSlider = createSlider(0, 20, 1, 0.05)
   dampingSlider.position(width/4 - dampingSlider.width/2, height - dampingSlider.height - 20)
-
+  // New Pendulum Variables Slider
   lengthSlider = createSlider(50, 400, 100)
-  lengthSlider.position(width/2, height + 10)
-
-  pendulums.push(new Pendulum(100, 50, 200, 55, -PI/4))
-  pendulums.push(new Pendulum(200, 50, 200, 55, PI/4))
+  lengthSlider.position(3*width/4 - lengthSlider.width/2, height - lengthSlider.height - 20)
+  massSlider = createSlider(25, 65, 45, 0.5)
+  massSlider.position(3*width/4 - massSlider.width/2, height - massSlider.height - 50)
+  initialAngleSlider = createSlider(0, PI/2, PI/4, 0.0174533/2)  // 0.0174533rad = 1 degree
+  initialAngleSlider.position(3*width/4 - initialAngleSlider.width/2, height - initialAngleSlider.height - 80)
 }
 
-function drawOptions(){
+function setup() {
+  createCanvas(800, 700);
+  
+  initSliders()
+}
+
+function drawSliderLabels(){
+  // Draw Constants Labels
   fill(255)
+  noStroke()
   textSize(20)
   text("Gravity: ", gravitySlider.x - 75, gravitySlider.y + 16)
-  text("Damping: ", dampingSlider.x - 85, dampingSlider.y + 16)
+  text("Damping: ", dampingSlider.x - 90, dampingSlider.y + 16)
+  text(gravitySlider.value().toFixed(2), gravitySlider.x + gravitySlider.width + 10, gravitySlider.y + 16)
+  text((dampingSlider.value()/100).toFixed(2), dampingSlider.x + dampingSlider.width + 10, dampingSlider.y + 16)
+
+  // Draw Variables Labels
+  text("Angle: ", initialAngleSlider.x - 65, initialAngleSlider.y + 16)
+  text("Mass: ", massSlider.x - 60, massSlider.y + 16)
+  text("Length: ", lengthSlider.x - 74, lengthSlider.y + 16)
+  text(degrees(initialAngleSlider.value()).toFixed(1), initialAngleSlider.x + initialAngleSlider.width + 10, initialAngleSlider.y + 16)
+  text(massSlider.value().toFixed(1), massSlider.x + massSlider.width + 10, massSlider.y + 16)
+  text(lengthSlider.value().toFixed(0), lengthSlider.x + lengthSlider.width + 10, lengthSlider.y + 16)
 }
 
 function draw() {
@@ -56,7 +73,7 @@ function draw() {
   GRAVITY = gravitySlider.value()
   DAMPING = dampingSlider.value()/100
 
-  drawOptions()
+  drawSliderLabels()
 
   for(let p of pendulums){
     p.update()
@@ -111,7 +128,6 @@ function mousePressed(){
   }
 }
 
-
 function keyPressed(){
   // If user presses key "d" while a pendulum is selected
   if(key === "d" && selectedPendulum){
@@ -132,8 +148,8 @@ function keyPressed(){
       // Leave "add" mode and make the newPendulum undefined
       newPendulum = undefined
     }else{
-      // Create new pendulum
-      newPendulum = new Pendulum(mouseX, mouseY, 100, 45, PI/8)
+      // Create new pendulum based on slider values
+      newPendulum = new Pendulum(mouseX, mouseY, lengthSlider.value(), massSlider.value(), initialAngleSlider.value())
       // Make pendulum origin follow mouse
       newPendulum.baseFollowMouse = true
       // Make pendulum render as ghost
