@@ -8,6 +8,11 @@ const ORIGIN_SIZE = 15
 let addPendulum = false
 let newPendulum = undefined
 
+// Sliders
+let lengthSlider, massSlider, initialAngleSlider, gravitySlider, dampingSlider
+let GRAVITY
+let DAMPING
+
 /*
     Returns the distance between points a and b
 */
@@ -23,15 +28,36 @@ function addRandomPendulums(){
 }
 
 function setup() {
-  createCanvas(450, 450);
-  
+  createCanvas(600, 600);
+    
+  gravitySlider = createSlider(0, 10, 0.98, 0.01)
+  gravitySlider.position(width/4 - gravitySlider.width/2, height - gravitySlider.height - 50)
+
+  dampingSlider = createSlider(0, 20, 1, 0.05)
+  dampingSlider.position(width/4 - dampingSlider.width/2, height - dampingSlider.height - 20)
+
+  lengthSlider = createSlider(50, 400, 100)
+  lengthSlider.position(width/2, height + 10)
+
   pendulums.push(new Pendulum(100, 50, 200, 55, -PI/4))
   pendulums.push(new Pendulum(200, 50, 200, 55, PI/4))
+}
+
+function drawOptions(){
+  fill(255)
+  textSize(20)
+  text("Gravity: ", gravitySlider.x - 75, gravitySlider.y + 16)
+  text("Damping: ", dampingSlider.x - 85, dampingSlider.y + 16)
 }
 
 function draw() {
   background(50);
   
+  GRAVITY = gravitySlider.value()
+  DAMPING = dampingSlider.value()/100
+
+  drawOptions()
+
   for(let p of pendulums){
     p.update()
     p.render()

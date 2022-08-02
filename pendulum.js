@@ -1,4 +1,4 @@
-const GRAVITY = 0.981
+// const GRAVITY = 0.981
 
 class Pendulum {
 
@@ -42,7 +42,7 @@ class Pendulum {
         this.angle += this.angleV
         
         // Damping
-        this.angleV *= 0.99
+        this.angleV *= 1.00 - DAMPING
       }else{
         let dx = mouseX - this.origin.x
         let dy = mouseY - this.origin.y
@@ -50,7 +50,7 @@ class Pendulum {
         this.angle = Math.atan(dx/dy)      
       }
     }
-    
+
     // If user clicks on origin, follow mouse
     if(this.baseFollowMouse){
       this.origin = {x: mouseX, y: mouseY}
