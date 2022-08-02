@@ -1,15 +1,7 @@
 const GRAVITY = 0.981
 
-/*
-    Returns the distance between points a and b
-*/
-function distance(a, b){
-  let x = b.x - a.x
-  let y = b.y - a.y
-  return Math.sqrt((x*x + y*y))
-}
-
 class Pendulum {
+
   constructor(x, y, length, mass, initial_angle){
     // Origin Point
     this.origin = {x: x, y: y}
@@ -30,17 +22,34 @@ class Pendulum {
     this.r = Math.random() * 255
     this.g = Math.random() * 255
     this.b = Math.random() * 255
+
+    // Is it being dragged by a mouse
+    this.followMouse = false
+    this.baseFollowMouse = false
   }
   
   update(){
-    // angular accelration = -g*sin(theta)/R
-    let force = GRAVITY * sin(this.angle)/this.length
-    this.angleA = -force
-    this.angleV += this.angleA
-    this.angle += this.angleV
-    
-    // Damping
-    this.angleV *= 0.99
+    // Update angle
+    if(!this.followMouse){
+      // angular accelration = -g*sin(theta)/R
+      let force = GRAVITY * sin(this.angle)/this.length
+      this.angleA = -force
+      this.angleV += this.angleA
+      this.angle += this.angleV
+      
+      // Damping
+      this.angleV *= 0.99
+    }else{
+      let dx = mouseX - this.origin.x
+      let dy = mouseY - this.origin.y
+
+      this.angle = Math.atan(dx/dy)      
+    }
+
+    // If user clicks on origin, follow mouse
+    if(this.baseFollowMouse){
+      this.origin = {x: mouseX, y: mouseY}
+    }
 
     // Calculate position of "ball" based on angle
     this.ball.x = this.length * sin(this.angle) + this.origin.x
@@ -49,13 +58,20 @@ class Pendulum {
   
   // Render pendulum
   render(){
-    fill(this.r, this.g, this.b)
+    // Draw origin point
     noStroke()
-    ellipse(this.ball.x, this.ball.y, this.mass)
+    fill(30)
+    ellipse(this.origin.x, this.origin.y, ORIGIN_SIZE)
 
+    // Draw string
     stroke(this.r, this.g, this.b)
     strokeWeight(5)
     line(this.origin.x, this.origin.y, this.ball.x, this.ball.y)
+
+    // Draw ball
+    fill(this.r, this.g, this.b)
+    noStroke()
+    ellipse(this.ball.x, this.ball.y, this.mass)
   }
   
   collides(){
@@ -80,5 +96,9 @@ class Pendulum {
         other.angleV = v2 * 0.99
       }
     }
+  }
+
+  contains(point){
+    return (distance(point, this.ball) < this.mass/2)
   }
 }
